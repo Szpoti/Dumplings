@@ -21,7 +21,6 @@ namespace RunDumplingsScheduled
                 Console.WriteLine("Starting scheduled run of Dumplings.");
 
                 ProcessStartInfo startInfo = new(".\\ScheduledProgram.bat");
-                // startInfo.WorkingDirectory = "D:\\Dumplings\\Dumplings.Cli";
                 startInfo.UseShellExecute = false;
                 startInfo.CreateNoWindow = false;
                 startInfo.RedirectStandardOutput = true;
