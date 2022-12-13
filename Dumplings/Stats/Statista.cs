@@ -49,7 +49,7 @@ namespace Dumplings.Stats
             .Concat(wasabiResults.Keys)
             .Distinct()
             .OrderBy(x => x.Year)
-            .ThenBy(x => x.Month))
+            .ThenBy(x => x.Month).TakeLast(1))
             {
                 if (!otheriResults.TryGetValue(yearMonth, out Money otheri))
                 {
@@ -74,7 +74,7 @@ namespace Dumplings.Stats
                 comm.Parameters["@d"].Direction = ParameterDirection.Input;
                 conn.Open();
                 MySqlDataReader reader = comm.ExecuteReader();
-                bool write = false;
+                bool write = true;
                 while (reader.Read())
                 {
                     if (reader[0].ToString() == "0")
