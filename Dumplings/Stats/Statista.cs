@@ -74,7 +74,7 @@ namespace Dumplings.Stats
                 comm.Parameters["@d"].Direction = ParameterDirection.Input;
                 conn.Open();
                 MySqlDataReader reader = comm.ExecuteReader();
-                bool write = true;
+                bool write = false;
                 while (reader.Read())
                 {
                     if (reader[0].ToString() == "0")
