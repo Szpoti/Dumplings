@@ -49,7 +49,7 @@ namespace Dumplings.Stats
             .Concat(wasabiResults.Keys)
             .Distinct()
             .OrderBy(x => x.Year)
-            .ThenBy(x => x.Month).TakeLast(1))
+            .ThenBy(x => x.Month))
             {
                 if (!otheriResults.TryGetValue(yearMonth, out Money otheri))
                 {
