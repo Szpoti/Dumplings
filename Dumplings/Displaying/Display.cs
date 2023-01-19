@@ -324,5 +324,20 @@ namespace Dumplings.Displaying
                 Console.WriteLine($"{cj.Value.BlockInfo.YearMonthDay}:\t{cj.Key}\t{cj.Value.Id}");
             }
         }
+
+        internal static void DisplayCoinJoinHashes(IEnumerable<VerboseTransactionInfo> coinJoins)
+        {
+            foreach (var tx in coinJoins)
+            {
+                var blockTime = tx.BlockInfo.BlockTime;
+                if (blockTime.HasValue)
+                {
+                    var blockTimeValue = blockTime.Value;
+                    var yearMonth = new YearMonth(blockTimeValue.Year, blockTimeValue.Month);
+
+                    Console.WriteLine($"{yearMonth}: {tx.Id}");
+                }
+            }
+        }
     }
 }

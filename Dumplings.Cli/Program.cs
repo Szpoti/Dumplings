@@ -180,6 +180,11 @@ namespace Dumplings.Cli
                         var stat = new Statista(loadedScannerFiles, client);
                         stat.DisplayCoinJoins();
                     }
+                    else if (command == Command.DisplayCoinJoinsHash)
+                    {
+                        var stat = new Statista(loadedScannerFiles, client);
+                        stat.DisplayCoinJoinsHash();
+                    }
                 }
                 finally
                 {

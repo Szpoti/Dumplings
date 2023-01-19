@@ -1220,5 +1220,13 @@ namespace Dumplings.Stats
                 Display.DisplayOtheriWasabiSamuriResults(otheriResults, wasabi2Results, wasabiResults, samuriResults);
             }
         }
+
+        public void DisplayCoinJoinsHash()
+        {
+            using (BenchmarkLogger.Measure())
+            {
+                Display.DisplayCoinJoinHashes(ScannerFiles.WasabiCoinJoins);
+            }
+        }
     }
 }
