@@ -17,13 +17,16 @@ namespace Dumplings.Displaying
         public static void DisplayOtheriWasabiSamuriResults(IDictionary<YearMonth, int> otheriResults, IDictionary<YearMonth, int> wasabiResults, IDictionary<YearMonth, int> samuriResults)
             => DisplayOtheriWasabiSamuriResults(otheriResults, null, wasabiResults, samuriResults);
 
+        public static void DisplayOtheriWasabiSamuriResults(IDictionary<YearMonth, decimal> otheriResults, IDictionary<YearMonth, decimal> wasabi2Results, IDictionary<YearMonth, decimal> wasabiResults, IDictionary<YearMonth, decimal> samuriResults)
+            => DisplayOtheriWasabiSamuriResults(otheriResults.ToDictionary(x => x.Key, x => (int)x.Value), wasabi2Results.ToDictionary(x => x.Key, x => (int)x.Value), wasabiResults.ToDictionary(x => x.Key, x => (int)x.Value), samuriResults.ToDictionary(x => x.Key, x => (int)x.Value));
+
         public static void DisplayOtheriWasabiSamuriResults(IDictionary<YearMonth, int> otheriResults, IDictionary<YearMonth, int> wasabi2Results, IDictionary<YearMonth, int> wasabiResults, IDictionary<YearMonth, int> samuriResults)
         {
             var isWW2 = wasabi2Results != null;
 
             if (isWW2)
             {
-                Console.WriteLine($"Month;Otheri;Wasabi2;Samuri");
+                Console.WriteLine($"Month;Otheri;Wasabi2;Wasabi;Samuri");
             }
             else
             {

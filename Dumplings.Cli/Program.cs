@@ -175,6 +175,11 @@ namespace Dumplings.Cli
                         var stat = new Statista(loadedScannerFiles, client);
                         stat.UploadToDatabase();
                     }
+                    else if (command == Command.DisplayCoinJoins)
+                    {
+                        var stat = new Statista(loadedScannerFiles, client);
+                        stat.DisplayCoinJoins();
+                    }
                 }
                 finally
                 {

@@ -1207,5 +1207,18 @@ namespace Dumplings.Stats
             CalculateAndUploadPostMixConsolidation();
             Console.WriteLine("Upload complete! Finishing...");
         }
+
+        public void DisplayCoinJoins()
+        {
+            using (BenchmarkLogger.Measure())
+            {
+                Dictionary<YearMonth, decimal> wasabiResults = CalculateCoinJoinsPerMonth(ScannerFiles.WasabiCoinJoins);
+                Dictionary<YearMonth, decimal> wasabi2Results = CalculateCoinJoinsPerMonth(ScannerFiles.Wasabi2CoinJoins);
+                Dictionary<YearMonth, decimal> samuriResults = CalculateCoinJoinsPerMonth(ScannerFiles.SamouraiCoinJoins);
+                Dictionary<YearMonth, decimal> otheriResults = CalculateCoinJoinsPerMonth(ScannerFiles.OtherCoinJoins);
+
+                Display.DisplayOtheriWasabiSamuriResults(otheriResults, wasabi2Results, wasabiResults, samuriResults);
+            }
+        }
     }
 }
