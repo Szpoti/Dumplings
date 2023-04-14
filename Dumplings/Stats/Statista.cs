@@ -12,6 +12,7 @@ using MySql.Data.MySqlClient;
 using Dumplings.Cli;
 using System.Data;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Dumplings.Stats
 {
@@ -1466,6 +1467,17 @@ namespace Dumplings.Stats
             Console.WriteLine("Upload complete! Uploading PostMixConsolidation...");
             CalculateAndUploadPostMixConsolidation();
             Console.WriteLine("Upload complete! Finishing...");
+        }
+
+        public void CalculateAddressReusesInCoinjoins(RPCClient client)
+        {
+            Console.WriteLine("Taking last 100 coinjoins.");
+            var coinjoins = ScannerFiles.Wasabi2CoinJoins.TakeLast(100);
+            foreach (var cj in coinjoins)
+            {
+                var uniqueScriptsCount = cj.Inputs.DistinctBy(input => input.PrevOutput.ScriptPubKey).Count();
+                Console.WriteLine($"Transaction {cj.Id}: {uniqueScriptsCount} out of {cj.Inputs.Count()} inputs have unique scripts.");
+            }
         }
     }
 }

@@ -147,6 +147,10 @@ namespace Dumplings.Cli
                     {
                         stat.UploadToDatabase();
                     }
+                    else if (command == Command.GetAddressReuses)
+                    {
+                        stat.CalculateAddressReusesInCoinjoins();
+                    }
                 }
                 catch (Exception ex)
                 {
