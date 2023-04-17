@@ -1469,7 +1469,7 @@ namespace Dumplings.Stats
             Console.WriteLine("Upload complete! Finishing...");
         }
 
-        public void CalculateAddressReusesInCoinjoins(RPCClient client)
+        public void CalculateAddressReusesInCoinjoins()
         {
             Console.WriteLine("Taking last 100 coinjoins.");
             var coinjoins = ScannerFiles.Wasabi2CoinJoins.TakeLast(100);
