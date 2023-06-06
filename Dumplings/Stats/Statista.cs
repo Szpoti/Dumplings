@@ -1407,10 +1407,10 @@ namespace Dumplings.Stats
 
                     var blockTime = tx.BlockInfo.BlockTime;
 
-                    if (lastCoinJoinTime.HasValue && (lastCoinJoinTime - blockTime).Value.Duration() > TimeSpan.FromDays(7))
-                    {
-                        throw new InvalidOperationException("No CoinJoin for a week");
-                    }
+                    //if (lastCoinJoinTime.HasValue && (lastCoinJoinTime - blockTime).Value.Duration() > TimeSpan.FromDays(7))
+                    //{
+                    //    throw new InvalidOperationException("No CoinJoin for a week");
+                    //}
 
                     lastCoinJoinTime = blockTime;
 
