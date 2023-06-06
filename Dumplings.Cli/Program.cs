@@ -143,6 +143,11 @@ namespace Dumplings.Cli
                     {
                         stat.CalculateWabiSabiCoordStats(GetXpub(args));
                     }
+                    else if (command == Command.ScanWW1)
+                    {
+                        var scanner = new Scanner(client);
+                        await scanner.ScanWW1Async(GetXpub(args));
+                    }
                     else if (command == Command.Upload)
                     {
                         stat.UploadToDatabase();
