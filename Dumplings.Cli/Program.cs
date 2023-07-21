@@ -47,12 +47,12 @@ namespace Dumplings.Cli
                     if (GetShouldSync(args))
                     {
                         var scanner = new Scanner(client);
-                        await scanner.ScanAsync(rescan: false);
+                        await scanner.ScanAsync(rescan: false, GetXpub(args));
                     }
                     else if (GetShouldResync(args))
                     {
                         var scanner = new Scanner(client);
-                        await scanner.ScanAsync(rescan: true);
+                        await scanner.ScanAsync(rescan: true, GetXpub(args));
                     }
 
                     var loadedScannerFiles = Scanner.Load();
@@ -146,7 +146,7 @@ namespace Dumplings.Cli
                     else if (command == Command.ScanWW1)
                     {
                         var scanner = new Scanner(client);
-                        await scanner.ScanWW1Async(GetXpub(args));
+                        await scanner.ScanWW1Async();
                     }
                     else if (command == Command.Upload)
                     {

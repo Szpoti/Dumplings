@@ -40,7 +40,7 @@ namespace Dumplings.Scanning
         private decimal PreviousPercentageDone { get; set; } = -1;
         public static HashSet<long> Wasabi2Denominations { get; } = CreateWasabi2Denominations().ToHashSet();
 
-        public async Task ScanAsync(bool rescan)
+        public async Task ScanAsync(bool rescan, ExtPubKey[] extPubKeys)
         {
             if (rescan)
             {
@@ -125,6 +125,15 @@ namespace Dumplings.Scanning
                             (Money mostFrequentEqualOutputValue, int mostFrequentEqualOutputCount) = indistinguishableOutputs.OrderByDescending(x => x.count).First(); // Segwit only inputs.
                             var isNativeSegwitOnly = tx.Inputs.All(x => x.PrevOutput.ScriptPubKey.IsScriptType(ScriptType.P2WPKH)) && tx.Outputs.All(x => x.ScriptPubKey.IsScriptType(ScriptType.P2WPKH)); // Segwit only outputs.
 
+                            var scripts = Constants.WasabiCoordScripts.ToHashSet();
+                            foreach (var xpub in extPubKeys)
+                            {
+                                for (int i = 0; i < 100_000; i++)
+                                {
+                                    scripts.Add(xpub.Derive(0, false).Derive(i, false).PubKey.WitHash.ScriptPubKey);
+                                }
+                            }
+
                             // IDENTIFY WASABI 2 COINJOINS
                             if (block.Height >= Constants.FirstWasabi2Block)
                             {
@@ -137,7 +146,7 @@ namespace Dumplings.Scanning
                             }
 
                             // IDENTIFY WASABI COINJOINS
-                            if (!isWasabi2Cj && block.Height >= Constants.FirstWasabiBlock)
+                            if (block.Height >= Constants.FirstWasabiBlock)
                             {
                                 // Before Wasabi had constant coordinator addresses and different base denominations at the beginning.
                                 if (tx.Id == Constants.FirstWW1CoinJoinAfterNoCoordAddress)
@@ -151,15 +160,12 @@ namespace Dumplings.Scanning
                                 }
                                 else
                                 {
-                                    var uniqueOutputCount = tx.GetIndistinguishableOutputs(includeSingle: true).Count(x => x.count == 1);
-                                    isWasabiCj =
-                                        isNativeSegwitOnly
-                                        && mostFrequentEqualOutputCount >= 10 // At least 10 equal outputs.
-                                        && outputValues.SequenceEqual(outputValues.OrderBy(x => x)) // Outputs are ordered ascending.
-                                        && inputValues.SequenceEqual(inputValues.OrderBy(x => x)) // Inputs are ordered ascending.
-                                        && inputCount >= mostFrequentEqualOutputCount // More inptuts than most frequent equal outputs.
-                                        && mostFrequentEqualOutputValue.Almost(Constants.ApproximateWasabiBaseDenomination, Constants.WasabiBaseDenominationPrecision) // The most frequent equal outputs must be almost the base denomination.
-                                        && uniqueOutputCount >= 2; // It's very likely there's at least one change and at least one coord output those have unique values.
+                                    var coordOutput = tx.Outputs.FirstOrDefault(x => scripts.Contains(x.ScriptPubKey));
+                                    if (coordOutput is null)
+                                    {
+                                        continue;
+                                    }
+                                    isWasabiCj = true;
                                 }
                             }
 
