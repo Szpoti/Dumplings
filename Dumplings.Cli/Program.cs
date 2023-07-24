@@ -148,6 +148,10 @@ namespace Dumplings.Cli
                         var scanner = new Scanner(client);
                         await scanner.ScanWW1Async(GetXpub(args));
                     }
+                    else if (command == Command.GetTx)
+                    {
+                        await stat.GetTx(GetXpub(args));
+                    }
                     else if (command == Command.Upload)
                     {
                         stat.UploadToDatabase();
