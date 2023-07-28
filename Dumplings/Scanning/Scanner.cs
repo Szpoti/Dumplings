@@ -40,7 +40,7 @@ namespace Dumplings.Scanning
         private decimal PreviousPercentageDone { get; set; } = -1;
         public static HashSet<long> Wasabi2Denominations { get; } = CreateWasabi2Denominations().ToHashSet();
 
-        public async Task ScanAsync(bool rescan, ExtPubKey[] extPubKeys)
+        public async Task ScanAsync(bool rescan, ExtPubKey[] ww1extPubKeys, ExtPubKey[] ww2extPubKeys)
         {
             if (rescan)
             {
@@ -125,24 +125,31 @@ namespace Dumplings.Scanning
                             (Money mostFrequentEqualOutputValue, int mostFrequentEqualOutputCount) = indistinguishableOutputs.OrderByDescending(x => x.count).First(); // Segwit only inputs.
                             var isNativeSegwitOnly = tx.Inputs.All(x => x.PrevOutput.ScriptPubKey.IsScriptType(ScriptType.P2WPKH)) && tx.Outputs.All(x => x.ScriptPubKey.IsScriptType(ScriptType.P2WPKH)); // Segwit only outputs.
 
-                            var scripts = Constants.WasabiCoordScripts.ToHashSet();
-                            foreach (var xpub in extPubKeys)
+                            HashSet<Script> ww1scripts = Constants.WasabiCoordScripts.ToHashSet();
+                            HashSet<Script> ww2scripts = new();
+                            foreach (var xpub in ww1extPubKeys)
                             {
                                 for (int i = 0; i < 100_000; i++)
                                 {
-                                    scripts.Add(xpub.Derive(0, false).Derive(i, false).PubKey.WitHash.ScriptPubKey);
+                                    ww1scripts.Add(xpub.Derive(0, false).Derive(i, false).PubKey.WitHash.ScriptPubKey);
+                                }
+                            }
+                            foreach (var xpub in ww2extPubKeys)
+                            {
+                                for (int i = 0; i < 100_000; i++)
+                                {
+                                    ww2scripts.Add(xpub.Derive(0, false).Derive(i, false).PubKey.WitHash.ScriptPubKey);
                                 }
                             }
 
                             // IDENTIFY WASABI 2 COINJOINS
                             if (block.Height >= Constants.FirstWasabi2Block)
                             {
-                                isWasabi2Cj =
-                                    tx.Inputs.All(x => x.PrevOutput.ScriptPubKey.IsScriptType(ScriptType.P2WPKH) || x.PrevOutput.ScriptPubKey.IsScriptType(ScriptType.Taproot))
-                                    && inputCount >= 50 // 50 was the minimum input count at the beginning of Wasabi 2.
-                                    && inputValues.SequenceEqual(inputValues.OrderByDescending(x => x)) // Inputs are ordered descending.
-                                    && outputValues.SequenceEqual(outputValues.OrderByDescending(x => x)) // Outputs are ordered descending.
-                                    && outputValues.Count(x => Wasabi2Denominations.Contains(x.Satoshi)) > outputCount * 0.8; // Most of the outputs contains the denomination.
+                                var coordOutput = tx.Outputs.FirstOrDefault(x => ww2scripts.Contains(x.ScriptPubKey));
+                                if (coordOutput is { })
+                                {
+                                    isWasabi2Cj = true;
+                                }
                             }
 
                             // IDENTIFY WASABI COINJOINS
@@ -160,12 +167,11 @@ namespace Dumplings.Scanning
                                 }
                                 else
                                 {
-                                    var coordOutput = tx.Outputs.FirstOrDefault(x => scripts.Contains(x.ScriptPubKey));
-                                    if (coordOutput is null)
+                                    var coordOutput = tx.Outputs.FirstOrDefault(x => ww1scripts.Contains(x.ScriptPubKey));
+                                    if (coordOutput is { })
                                     {
-                                        continue;
+                                        isWasabiCj = true;
                                     }
-                                    isWasabiCj = true;
                                 }
                             }
 

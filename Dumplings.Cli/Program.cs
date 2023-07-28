@@ -47,12 +47,12 @@ namespace Dumplings.Cli
                     if (GetShouldSync(args))
                     {
                         var scanner = new Scanner(client);
-                        await scanner.ScanAsync(rescan: false, GetXpub(args));
+                        await scanner.ScanAsync(rescan: false, GetXpub(args, "--xpub="), GetXpub(args, "--newxpub="));
                     }
                     else if (GetShouldResync(args))
                     {
                         var scanner = new Scanner(client);
-                        await scanner.ScanAsync(rescan: true, GetXpub(args));
+                        await scanner.ScanAsync(rescan: true, GetXpub(args, "--xpub="), GetXpub(args, "--newxpub="));
                     }
 
                     var loadedScannerFiles = Scanner.Load();
@@ -137,20 +137,16 @@ namespace Dumplings.Cli
                     }
                     else if (command == Command.WasabiCoordStats)
                     {
-                        stat.CalculateWasabiCoordStats(GetXpub(args));
+                        stat.CalculateWasabiCoordStats(GetXpub(args, "--xpub="));
                     }
                     else if (command == Command.WabiSabiCoordStats)
                     {
-                        stat.CalculateWabiSabiCoordStats(GetXpub(args));
+                        stat.CalculateWabiSabiCoordStats(GetXpub(args, "--newxpub="));
                     }
                     else if (command == Command.ScanWW1)
                     {
                         var scanner = new Scanner(client);
-                        await scanner.ScanWW1Async(GetXpub(args));
-                    }
-                    else if (command == Command.GetTx)
-                    {
-                        await stat.GetTx(GetXpub(args));
+                        await scanner.ScanWW1Async(GetXpub(args, "--xpub="));
                     }
                     else if (command == Command.Upload)
                     {
@@ -172,15 +168,14 @@ namespace Dumplings.Cli
             }
         }
 
-        private static ExtPubKey[] GetXpub(string[] args)
+        private static ExtPubKey[] GetXpub(string[] args, string argname)
         {
-            var xpubUserArg = "--xpub=";
             foreach (var arg in args)
             {
-                var idx = arg.IndexOf(xpubUserArg, StringComparison.Ordinal);
+                var idx = arg.IndexOf(argname, StringComparison.Ordinal);
                 if (idx == 0)
                 {
-                    return arg.Substring(idx + xpubUserArg.Length).Split(',')
+                    return arg.Substring(idx + argname.Length).Split(',')
                         .Select(str => ExtPubKey.Parse(str, Network.Main)).ToArray();
                 }
             }
