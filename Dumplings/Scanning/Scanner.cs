@@ -57,6 +57,23 @@ namespace Dumplings.Scanning
             var allOtherCoinJoinSet = new HashSet<uint256>();
             var allSamouraiTx0Set = new HashSet<uint256>();
 
+            HashSet<Script> ww1scripts = Constants.WasabiCoordScripts.ToHashSet();
+            HashSet<Script> ww2scripts = new();
+            foreach (var xpub in ww1extPubKeys)
+            {
+                for (int i = 0; i < 100_000; i++)
+                {
+                    ww1scripts.Add(xpub.Derive(0, false).Derive(i, false).PubKey.WitHash.ScriptPubKey);
+                }
+            }
+            foreach (var xpub in ww2extPubKeys)
+            {
+                for (int i = 0; i < 100_000; i++)
+                {
+                    ww2scripts.Add(xpub.Derive(0, false).Derive(i, false).PubKey.WitHash.ScriptPubKey);
+                }
+            }
+
             var opreturnTransactionCache = new MemoryCache(new MemoryCacheOptions() { SizeLimit = 100000 });
 
             ulong startingHeight = Constants.FirstWasabiBlock;
@@ -124,23 +141,6 @@ namespace Dumplings.Scanning
                             var inputCount = inputs.Length;
                             (Money mostFrequentEqualOutputValue, int mostFrequentEqualOutputCount) = indistinguishableOutputs.OrderByDescending(x => x.count).First(); // Segwit only inputs.
                             var isNativeSegwitOnly = tx.Inputs.All(x => x.PrevOutput.ScriptPubKey.IsScriptType(ScriptType.P2WPKH)) && tx.Outputs.All(x => x.ScriptPubKey.IsScriptType(ScriptType.P2WPKH)); // Segwit only outputs.
-
-                            HashSet<Script> ww1scripts = Constants.WasabiCoordScripts.ToHashSet();
-                            HashSet<Script> ww2scripts = new();
-                            foreach (var xpub in ww1extPubKeys)
-                            {
-                                for (int i = 0; i < 100_000; i++)
-                                {
-                                    ww1scripts.Add(xpub.Derive(0, false).Derive(i, false).PubKey.WitHash.ScriptPubKey);
-                                }
-                            }
-                            foreach (var xpub in ww2extPubKeys)
-                            {
-                                for (int i = 0; i < 100_000; i++)
-                                {
-                                    ww2scripts.Add(xpub.Derive(0, false).Derive(i, false).PubKey.WitHash.ScriptPubKey);
-                                }
-                            }
 
                             // IDENTIFY WASABI 2 COINJOINS
                             if (block.Height >= Constants.FirstWasabi2Block)
