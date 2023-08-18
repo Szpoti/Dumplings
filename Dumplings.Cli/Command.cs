@@ -28,7 +28,6 @@ namespace Dumplings.Cli
         CountCoinJoins,
         Upload,                      // Upload data to Database.
         DailyVolumes,
-        ScanWW1,
-        GetTx
+        ScanWW1
     }
 }
