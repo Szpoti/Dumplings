@@ -153,7 +153,7 @@ namespace Dumplings.Scanning
                             }
 
                             // IDENTIFY WASABI COINJOINS
-                            if (block.Height >= Constants.FirstWasabiBlock)
+                            if (!isWasabi2Cj && block.Height >= Constants.FirstWasabiBlock)
                             {
                                 // Before Wasabi had constant coordinator addresses and different base denominations at the beginning.
                                 if (tx.Id == Constants.FirstWW1CoinJoinAfterNoCoordAddress)
